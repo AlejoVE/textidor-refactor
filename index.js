@@ -41,25 +41,16 @@ app.get("/api/files", async (req, res, next) => {
     const files = await readDir(FILES_DIR);
     res.json(files);
   } catch (err) {
-    next(err);
-    return;
+    if (err && err.code === "ENOENT") {
+      res.status(404).end();
+      return;
+    }
+    if (err) {
+      next(err);
+      return;
+    }
   }
 });
-
-// app.get("/api/files", (req, res, next) => {
-//   fs.readdir(FILES_DIR, (err, list) => {
-//     if (err && err.code === "ENOENT") {
-//       res.status(404).end();
-//       return;
-//     }
-//     if (err) {
-//       next(err);
-//       return;
-//     }
-
-//     res.json(list);
-//   });
-// });
 
 // read a file
 //  called by action: fetchAndLoadFile
