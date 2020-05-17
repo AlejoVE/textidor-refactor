@@ -10,7 +10,6 @@ const config = require("./config");
 const api = require("./api/routes");
 
 // - setup -
-const FILES_DIR = path.join(__dirname, "/..", config.FILES_DIR);
 // create the express app
 const app = express();
 
@@ -46,18 +45,7 @@ app.post("/api/files/:name", api);
 
 // delete a file
 //  called by action: deleteFile
-app.delete("/api/files/:name", async (req, res, next) => {
-  try {
-    const fileName = req.params.name;
-    await deleteFile(`${FILES_DIR}/${fileName}`);
-    res.redirect(303, "/api/files");
-  } catch (err) {
-    if (err && err.code === "ENOENT") {
-      res.status(404).send("File not found").end();
-      return;
-    }
-  }
-});
+app.delete("/api/files/:name", api);
 
 // ..... to here ------
 
@@ -73,5 +61,3 @@ app.listen(config.PORT, () => {
     `listening at http://localhost:${config.PORT} (${config.MODE} mode)`
   );
 });
-
-module.exports = FILES_DIR;

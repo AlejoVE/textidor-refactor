@@ -63,6 +63,18 @@ const handlers = {
       }
     }
   },
+  deleteFile: async (req, res, next) => {
+    try {
+      const fileName = req.params.name;
+      await deleteFile(`${FILES_DIR}/${fileName}`);
+      res.redirect(303, "/api/files");
+    } catch (err) {
+      if (err && err.code === "ENOENT") {
+        res.status(404).send("File not found").end();
+        return;
+      }
+    }
+  },
 };
 
 // export the handlers

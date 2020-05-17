@@ -13,5 +13,6 @@ router.get("/", (req, res) => {
 router.get("/api/files", handlers.getFiles);
 router.get("/api/files/:name", handlers.getFile);
 router.post("/api/files/:name", handlers.writeFile);
+router.delete("/api/files/:name", handlers.deleteFile);
 // export the router
 module.exports = router;
