@@ -18,6 +18,7 @@ const app = express();
 const readFile = util.promisify(fs.readFile);
 const readDir = util.promisify(fs.readdir);
 const writeFile = util.promisify(fs.writeFile);
+const deleteFile = util.promisify(fs.unlink);
 // allow Cross Origin Resource Sharing
 app.use(cors());
 // parse the body
@@ -100,22 +101,17 @@ app.post("/api/files/:name", async (req, res, next) => {
 
 // delete a file
 //  called by action: deleteFile
-app.delete("/api/files/:name", (req, res, next) => {
-  const fileName = req.params.name;
-  fs.unlink(`${FILES_DIR}/${fileName}`, (err) => {
-    if (err && err.code === "ENOENT") {
-      res.status(404).end();
-      return;
-    }
-    if (err) {
-      next(err);
-      return;
-    }
-
-    // refactor hint:
+app.delete("/api/files/:name", async (req, res, next) => {
+  try {
+    const fileName = req.params.name;
+    await deleteFile(`${FILES_DIR}/${fileName}`);
     res.redirect(303, "/api/files");
-    // handlers.getFiles(req, res, next);
-  });
+  } catch (err) {
+    if (err && err.code === "ENOENT") {
+      res.status(404).send("File not found").end();
+      return;
+    }
+  }
 });
 
 // ..... to here ------
