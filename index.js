@@ -73,6 +73,28 @@ app.get("/api/files/:name", async (req, res, next) => {
 
 // write a file
 //  called by action: saveFile
+app.post("/api/files/:name", async (req, res, next) => {
+  try {
+    const fileName = req.params.name;
+    const fileContent = req.body.text;
+    await writeFile(`${FILES_DIR}/${fileName}`, fileContent);
+    const responseData = {
+      name: fileName,
+      text: fileContent,
+    };
+    res.json(responseData);
+  } catch (err) {
+    if (err && err.code === "ENOENT") {
+      res.status(404).end();
+      return;
+    }
+    if (err) {
+      next(err);
+      return;
+    }
+  }
+});
+
 app.post("/api/files/:name", (req, res, next) => {
   const fileName = req.params.name;
   const fileText = req.body.text;
