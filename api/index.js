@@ -1,2 +1,2 @@
 // require & export routes
-_;
+module.exports = require("./routes");
