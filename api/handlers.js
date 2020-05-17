@@ -42,6 +42,27 @@ const handlers = {
       }
     }
   },
+
+  writeFile: async (req, res, next) => {
+    try {
+      const fileName = req.params.name;
+      const fileContent = req.body.text;
+      await writeFile(`${FILES_DIR}/${fileName}`, fileContent);
+
+      // refactor hint:
+      res.redirect(303, "/api/files");
+      // handlers.getFiles(req, res, next);
+    } catch (err) {
+      if (err && err.code === "ENOENT") {
+        res.status(404).end();
+        return;
+      }
+      if (err) {
+        next(err);
+        return;
+      }
+    }
+  },
 };
 
 // export the handlers

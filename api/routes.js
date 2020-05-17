@@ -12,5 +12,6 @@ router.get("/", (req, res) => {
 // add routes to router
 router.get("/api/files", handlers.getFiles);
 router.get("/api/files/:name", handlers.getFile);
+router.post("/api/files/:name", handlers.writeFile);
 // export the router
 module.exports = router;
