@@ -54,24 +54,21 @@ app.get("/api/files", async (req, res, next) => {
 
 // read a file
 //  called by action: fetchAndLoadFile
-app.get("/api/files/:name", (req, res, next) => {
-  const fileName = req.params.name;
-  fs.readFile(`${FILES_DIR}/${fileName}`, "utf-8", (err, fileText) => {
-    if (err && err.code === "ENOENT") {
-      res.status(404).end();
-      return;
-    }
-    if (err) {
-      next(err);
-      return;
-    }
-
+app.get("/api/files/:name", async (req, res, next) => {
+  try {
+    const fileName = req.params.name;
+    const fileContent = await readFile(`${FILES_DIR}/${fileName}`, "utf-8");
     const responseData = {
       name: fileName,
-      text: fileText,
+      text: fileContent,
     };
     res.json(responseData);
-  });
+  } catch (err) {
+    if (err && err.code === "ENOENT") {
+      res.status(404).send("File not found").end();
+      return;
+    }
+  }
 });
 
 // write a file

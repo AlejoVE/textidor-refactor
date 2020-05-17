@@ -1,8 +1,1 @@
-f
-i
-l
-e
-.
-t
-x
-t
+This is the text of the file
