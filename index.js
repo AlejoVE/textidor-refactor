@@ -38,22 +38,7 @@ app.get("/api/files", api);
 
 // read a file
 //  called by action: fetchAndLoadFile
-app.get("/api/files/:name", async (req, res, next) => {
-  try {
-    const fileName = req.params.name;
-    const fileContent = await readFile(`${FILES_DIR}/${fileName}`, "utf-8");
-    const responseData = {
-      name: fileName,
-      text: fileContent,
-    };
-    res.json(responseData);
-  } catch (err) {
-    if (err && err.code === "ENOENT") {
-      res.status(404).send("File not found").end();
-      return;
-    }
-  }
-});
+app.get("/api/files/:name", api);
 
 // write a file
 //  called by action: saveFile
