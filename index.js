@@ -82,7 +82,10 @@ app.post("/api/files/:name", async (req, res, next) => {
       name: fileName,
       text: fileContent,
     };
-    res.json(responseData);
+
+    // refactor hint:
+    res.redirect(303, "/api/files").send(responseData);
+    // handlers.getFiles(req, res, next);
   } catch (err) {
     if (err && err.code === "ENOENT") {
       res.status(404).end();
@@ -93,25 +96,6 @@ app.post("/api/files/:name", async (req, res, next) => {
       return;
     }
   }
-});
-
-app.post("/api/files/:name", (req, res, next) => {
-  const fileName = req.params.name;
-  const fileText = req.body.text;
-  fs.writeFile(`${FILES_DIR}/${fileName}`, fileText, (err) => {
-    if (err && err.code === "ENOENT") {
-      res.status(404).end();
-      return;
-    }
-    if (err) {
-      next(err);
-      return;
-    }
-
-    // refactor hint:
-    res.redirect(303, "/api/files");
-    // handlers.getFiles(req, res, next);
-  });
 });
 
 // delete a file
