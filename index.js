@@ -7,18 +7,15 @@ const cors = require("cors");
 const fs = require("fs");
 const path = require("path");
 const config = require("./config");
-const util = require("util");
+const api = require("./api/routes");
 
 // - setup -
-const FILES_DIR = path.join(__dirname, config.FILES_DIR);
+const FILES_DIR = path.join(__dirname, "/..", config.FILES_DIR);
 // create the express app
 const app = express();
 
 // - use middleware -
-const readFile = util.promisify(fs.readFile);
-const readDir = util.promisify(fs.readdir);
-const writeFile = util.promisify(fs.writeFile);
-const deleteFile = util.promisify(fs.unlink);
+
 // allow Cross Origin Resource Sharing
 app.use(cors());
 // parse the body
@@ -37,21 +34,7 @@ app.use(morgan("dev"));
 app.use("/", express.static(path.join(__dirname, "client")));
 
 // ------ refactor everything from here .....
-app.get("/api/files", async (req, res, next) => {
-  try {
-    const files = await readDir(FILES_DIR);
-    res.json(files);
-  } catch (err) {
-    if (err && err.code === "ENOENT") {
-      res.status(404).end();
-      return;
-    }
-    if (err) {
-      next(err);
-      return;
-    }
-  }
-});
+app.get("/api/files", api);
 
 // read a file
 //  called by action: fetchAndLoadFile
@@ -128,3 +111,5 @@ app.listen(config.PORT, () => {
     `listening at http://localhost:${config.PORT} (${config.MODE} mode)`
   );
 });
+
+module.exports = FILES_DIR;
